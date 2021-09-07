@@ -37,7 +37,7 @@ struct SimObject
   Vector2 vel;
   float mass;
   Color color;
-  void addForce(Force force);
+  void addForce(Force force, float deltatime);
 };
 
 /**
@@ -47,10 +47,10 @@ struct SimObject
  * to the object's velocity
  * (or subtracts if acceleration is negative)
 */
-void SimObject::addForce(Force f)
+void SimObject::addForce(Force f, float deltatime)
 {
-  vel.x += f.magnitudeInDir.x / mass;
-  vel.y += f.magnitudeInDir.y / mass;
+  vel.x += (f.magnitudeInDir.x / mass) * deltatime;
+  vel.y += (f.magnitudeInDir.y / mass) * deltatime;
 }
 
 /**
@@ -90,14 +90,12 @@ void update(SimObject &square, SimObject ground)
   float* y = &square.position.y;
   
   if (*x > 0) *x += square.vel.x;
-  if (*y < SCREEN_HEIGHT - 50.0f - square.size.y) *y += square.vel.y;
+  if (*y <= SCREEN_HEIGHT - 50.0f - square.size.y - 8.5f) *y += square.vel.y;
 
   square.addForce
   (
-    Force
-    {
-      Vector2{ 0, gravity(square.position, ground.position, square.mass, ground.mass) }
-    }
+    Force{ Vector2{ 0, gravity(square.position, ground.position, square.mass, ground.mass) } },
+    GetFrameTime()
   );
   std::cout << "y: "<< std::setprecision(6) << (float)square.position.y << " x: " << (float)square.position.y << "\n";
 }
@@ -107,6 +105,7 @@ void render(SimObject square, SimObject ground)
   ClearBackground(RAYWHITE);
   BeginDrawing();
   DrawRectangleV(square.position, square.size, square.color);
+  DrawRectangleLines(square.position.x, square.position.y, square.size.x, square.size.y, GREEN);
   DrawRectangleV(ground.position, ground.size, ground.color);
   EndDrawing();
 }
@@ -121,7 +120,7 @@ int main()
     Vector2{ SCREEN_WIDTH/2.0f - 20.5f, SCREEN_HEIGHT/2.0f - 20.5f - 100.0f },
     Vector2{ 40, 40 },
     Vector2{ 0.0f, 0.0f },
-    50.0f,
+    10.0f,
     RED
   };
 
@@ -130,7 +129,7 @@ int main()
     Vector2{ 0, SCREEN_HEIGHT - 50.0f },
     Vector2{ SCREEN_WIDTH, 50.0f },
     Vector2{ 0.0f, 0.0f },
-    10'000'000'000'000.0f,
+    5'972'200'000'000'000.0f,
     BLACK
   };
 
