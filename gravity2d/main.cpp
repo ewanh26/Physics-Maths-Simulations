@@ -9,6 +9,8 @@
 #define SCREEN_WIDTH 800
 #define SCREEN_HEIGHT 450
 
+// ! NOTE: THIS IS CURRENTLY A WORK IN PROGRESS AND NOT PROPERLY FUNCTIONAL/CORRECT
+
 /**
  * * Force has its magnitude in
  * * the given direction
@@ -54,22 +56,37 @@ void SimObject::addForce(Force f, float deltatime)
 }
 
 /**
+ * * Pythagoras' theorem to find distance
+ * * between two points.
+ * * a^2 + b^2 = c^2.
+ * a being the difference of their x values.
+ * b being the difference of their y values.
+ * c^2 being the distance between the points
+ * (the hypoteneuse).
+*/
+float distance(Vector2 p1, Vector2 p2)
+{
+  return sqrt
+  (
+    pow(p1.x - p2.x, 2)
+    + pow(p1.y - p2.y, 2)
+  );
+}
+
+/**
  * * Implements Newton's law of universal gravitation
  * * Fg = G * (m1 * m2 / r^2)
  * G = Gravitational constant
  * m[x] = mass of object x
  * r = distance between objects
 */
-Vector2 gravity(Vector2 pos1, Vector2 pos2, float m1, float m2)
+float gravity(Vector2 pos1, Vector2 pos2, float m1, float m2)
 {
-  float xDiff = pos1.x - pos2.x;
-  float yDiff = pos1.y - pos2.y;
-  std::cout << "xDiff: " << xDiff << " yDiff: " << yDiff << "\n";
   auto applyFormula = [=](float dist) -> float
   {
     return G * ((m1 * m2) / (dist*dist));
   };
-  return Vector2{ applyFormula(yDiff), applyFormula(xDiff) };
+  return applyFormula(distance(pos1, pos2));
 }
 
 void update(SimObject& square, SimObject centreGrav, Camera2D& pov)
@@ -77,11 +94,11 @@ void update(SimObject& square, SimObject centreGrav, Camera2D& pov)
   pov.zoom += (float)(GetMouseWheelMove()*0.01f);
   pov.target = centreGrav.position;
 
-  square.addForce
-  (
-    Force{ gravity(square.position, centreGrav.position, square.mass, centreGrav.mass) },
-    GetFrameTime()
-  );
+  // square.addForce
+  // (
+  //   Force{ Vector2{ 0, gravity(square.position, centreGrav.position, square.mass, centreGrav.mass) } },
+  //   GetFrameTime()
+  // );
 
   square.position.x += square.vel.x;
   square.position.y += square.vel.y;
