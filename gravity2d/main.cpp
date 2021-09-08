@@ -54,59 +54,49 @@ void SimObject::addForce(Force f, float deltatime)
 }
 
 /**
- * * Pythagoras' theorem to find distance
- * * between two points.
- * * a^2 + b^2 = c^2.
- * a being the difference of their x values.
- * b being the difference of their y values.
- * c^2 being the distance between the points
- * (the hypoteneuse).
-*/
-float distance(Vector2 p1, Vector2 p2)
-{
-  return sqrt
-  (
-    pow(p1.x - p2.x, 2)
-    + pow(p1.y - p2.y, 2)
-  );
-}
-
-/**
  * * Implements Newton's law of universal gravitation
  * * Fg = G * (m1 * m2 / r^2)
  * G = Gravitational constant
  * m[x] = mass of object x
  * r = distance between objects
 */
-float gravity(Vector2 pos1, Vector2 pos2, float m1, float m2)
+Vector2 gravity(Vector2 pos1, Vector2 pos2, float m1, float m2)
 {
-  float dist = distance(pos1, pos2);
-  return G * ((m1 * m2) / (dist*dist));
+  float xDiff = pos1.x - pos2.x;
+  float yDiff = pos1.y - pos2.y;
+  std::cout << "xDiff: " << xDiff << " yDiff: " << yDiff << "\n";
+  auto applyFormula = [=](float dist) -> float
+  {
+    return G * ((m1 * m2) / (dist*dist));
+  };
+  return Vector2{ applyFormula(yDiff), applyFormula(xDiff) };
 }
 
-void update(SimObject &square, SimObject ground)
+void update(SimObject& square, SimObject centreGrav, Camera2D& pov)
 {
-  float* x = &square.position.x;
-  float* y = &square.position.y;
-  
-  if (*x > 0) *x += square.vel.x;
-  if (*y <= SCREEN_HEIGHT - 50.0f - square.size.y - 8.5f) *y += square.vel.y;
+  pov.zoom += (float)(GetMouseWheelMove()*0.01f);
+  pov.target = centreGrav.position;
 
   square.addForce
   (
-    Force{ Vector2{ 0, gravity(square.position, ground.position, square.mass, ground.mass) } },
+    Force{ gravity(square.position, centreGrav.position, square.mass, centreGrav.mass) },
     GetFrameTime()
   );
-  std::cout << "y: "<< std::setprecision(6) << (float)square.position.y << " x: " << (float)square.position.y << "\n";
+
+  square.position.x += square.vel.x;
+  square.position.y += square.vel.y;
+
+  std::cout << "xVel: "<< std::setprecision(6) << (float)square.vel.x << " yVel: " << (float)square.vel.y << "\n";
 }
 
-void render(SimObject square, SimObject ground)
+void render(SimObject square, SimObject centreGrav, Camera2D pov)
 {
   ClearBackground(RAYWHITE);
   BeginDrawing();
-  DrawRectangleV(square.position, square.size, square.color);
-  DrawRectangleLines(square.position.x, square.position.y, square.size.x, square.size.y, GREEN);
-  DrawRectangleV(ground.position, ground.size, ground.color);
+  BeginMode2D(pov);
+  DrawCircleV(centreGrav.position, centreGrav.size.x, centreGrav.color);
+  DrawCircleV(square.position, square.size.x, square.color);
+  EndMode2D();
   EndDrawing();
 }
 
@@ -115,22 +105,30 @@ int main()
   // Initialization
   InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "window lol");
 
-  SimObject square =
+  SimObject square
   {
-    Vector2{ SCREEN_WIDTH/2.0f - 20.5f, SCREEN_HEIGHT/2.0f - 20.5f - 100.0f },
+    Vector2{ 100.0f, 100.0f },
     Vector2{ 40, 40 },
     Vector2{ 0.0f, 0.0f },
     10.0f,
     RED
   };
 
-  SimObject ground =
+  SimObject centreGrav
   {
-    Vector2{ 0, SCREEN_HEIGHT - 50.0f },
-    Vector2{ SCREEN_WIDTH, 50.0f },
+    Vector2{ SCREEN_WIDTH/2.0f, SCREEN_HEIGHT/2.0f },
+    Vector2{ 50.0f, 50.0f },
     Vector2{ 0.0f, 0.0f },
-    5'972'200'000'000'000.0f,
+    5'972'900'000'000.0f,
     BLACK
+  };
+
+  Camera2D pov
+  {
+    { SCREEN_WIDTH/2.0f, SCREEN_HEIGHT/2.0f }, // Offset
+    centreGrav.position,
+    0.0f, // Rotation
+    1.0f // Zoom
   };
 
   SetTargetFPS(60);               // 60 frames-per-second
@@ -138,9 +136,9 @@ int main()
   // Main loop
   while (!WindowShouldClose())    // Detect window close button or ESC key
   {
-    update(square, ground);
+    update(square, centreGrav, pov);
 
-    render(square, ground);
+    render(square, centreGrav, pov);
   }
 
   // De-Initialization
