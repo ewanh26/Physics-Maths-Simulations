@@ -25,7 +25,7 @@ struct Force
 /**
  * * Simulated Object
  * contains:
- * x and y position.
+ * x and y pos.
  * width and height (x and y in size).
  * velocities in x and y directions.
  * mass (theoretically in kilograms).
@@ -34,7 +34,7 @@ struct Force
 */
 struct SimObject
 {
-  Vector2 position;
+  Vector2 pos;
   Vector2 size;
   Vector2 vel;
   float mass;
@@ -74,6 +74,22 @@ float distance(Vector2 p1, Vector2 p2)
 }
 
 /**
+ * Get angle using lengths of x and y differences and tangent-1
+ * Use the magnitude (hypoteneuse, F) and angle to find Fx and Fy
+ * TODO: NEGATIVE COMPONENTS
+ * TODO: FIX THIS WHAT IS GOING ON
+*/
+Vector2 getPerpendicularMagnitudes(Vector2 pos1, Vector2 pos2, float fTotalMagnitude)
+{
+  float theta = atan((pos1.y - pos2.y) / (pos1.x - pos2.x)) * 180/PI;
+  float Fx = (cos(theta) * 180/PI) * (pos1.x - pos2.x < 0 ? fTotalMagnitude : -fTotalMagnitude);
+  float Fy = (sin(theta) * 180/PI) * (pos1.y - pos2.y < 0 ? -fTotalMagnitude : fTotalMagnitude);
+  std::cout << "theta: " << theta << " ";
+  std::cout << "Fx: " << Fx << " Fy: " << Fy;
+  return Vector2{ Fx, Fy };
+}
+
+/**
  * * Implements Newton's law of universal gravitation
  * * Fg = G * (m1 * m2 / r^2)
  * G = Gravitational constant
@@ -82,26 +98,31 @@ float distance(Vector2 p1, Vector2 p2)
 */
 float gravity(Vector2 pos1, Vector2 pos2, float m1, float m2)
 {
-  auto applyFormula = [=](float dist) -> float
-  {
-    return G * ((m1 * m2) / (dist*dist));
-  };
-  return applyFormula(distance(pos1, pos2));
+  float dist = distance(pos1, pos2);
+  return G * ((m1 * m2) / (dist*dist));
 }
 
 void update(SimObject& square, SimObject centreGrav, Camera2D& pov)
 {
   pov.zoom += (float)(GetMouseWheelMove()*0.01f);
-  pov.target = centreGrav.position;
+  pov.target = centreGrav.pos;
 
-  // square.addForce
-  // (
-  //   Force{ Vector2{ 0, gravity(square.position, centreGrav.position, square.mass, centreGrav.mass) } },
-  //   GetFrameTime()
-  // );
+  square.addForce
+  (
+    Force
+    { 
+      getPerpendicularMagnitudes
+      (
+        square.pos,
+        centreGrav.pos,
+        gravity(square.pos, centreGrav.pos, square.mass, centreGrav.mass)
+      )
+    },
+    GetFrameTime()
+  );
 
-  square.position.x += square.vel.x;
-  square.position.y += square.vel.y;
+  square.pos.x += square.vel.x;
+  square.pos.y += square.vel.y;
 
   std::cout << "xVel: "<< std::setprecision(6) << (float)square.vel.x << " yVel: " << (float)square.vel.y << "\n";
 }
@@ -111,8 +132,8 @@ void render(SimObject square, SimObject centreGrav, Camera2D pov)
   ClearBackground(RAYWHITE);
   BeginDrawing();
   BeginMode2D(pov);
-  DrawCircleV(centreGrav.position, centreGrav.size.x, centreGrav.color);
-  DrawCircleV(square.position, square.size.x, square.color);
+  DrawCircleV(centreGrav.pos, centreGrav.size.x, centreGrav.color);
+  DrawCircleV(square.pos, square.size.x, square.color);
   EndMode2D();
   EndDrawing();
 }
@@ -124,7 +145,7 @@ int main()
 
   SimObject square
   {
-    Vector2{ 100.0f, 100.0f },
+    Vector2{ 0.0f, 500.0f },
     Vector2{ 40, 40 },
     Vector2{ 0.0f, 0.0f },
     10.0f,
@@ -143,7 +164,7 @@ int main()
   Camera2D pov
   {
     { SCREEN_WIDTH/2.0f, SCREEN_HEIGHT/2.0f }, // Offset
-    centreGrav.position,
+    centreGrav.pos,
     0.0f, // Rotation
     1.0f // Zoom
   };
