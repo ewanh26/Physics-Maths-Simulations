@@ -17,7 +17,8 @@
 */
 struct Force
 {
-  Vector2 magnitudeInDir;
+  float x;
+  float y;
 };
 
 /**
@@ -49,8 +50,8 @@ struct SimObject
 */
 void SimObject::addForce(Force f, float deltatime)
 {
-  vel.x += (f.magnitudeInDir.x / mass) * deltatime;
-  vel.y += (f.magnitudeInDir.y / mass) * deltatime;
+  vel.x += (f.x / mass) * deltatime;
+  vel.y += (f.y / mass) * deltatime;
 }
 
 /**
@@ -78,14 +79,15 @@ float distance(Vector2 p1, Vector2 p2)
 Vector2 getPerpendicularMagnitudes(Vector2 pos1, Vector2 pos2, float fTotalMagnitude)
 {
   float theta = abs(atan((pos1.y - pos2.y) / (pos1.x - pos2.x)) * 180/PI);
-  float Fx = (cos(theta) * 180/PI) * fTotalMagnitude;
-  float Fy = (sin(theta) * 180/PI) * fTotalMagnitude;
+  float Fx = (abs(cos(theta)) * 180/PI) * fTotalMagnitude;
+  float Fy = (abs(sin(theta)) * 180/PI) * fTotalMagnitude;
   std::cout << "theta: " << theta << " ";
-  std::cout << "Fx: " << Fx << " Fy: " << Fy;
-  if (pos1.x <= SCREEN_WIDTH/2 && pos1.y <= SCREEN_HEIGHT/2) return Vector2{ -Fx, -Fy }; // Top Left
-  if (pos1.x >= SCREEN_WIDTH/2 && pos1.y <= SCREEN_HEIGHT/2) return Vector2{ Fx, -Fy }; // Top Right
-  if (pos1.x >= SCREEN_WIDTH/2 && pos1.y >= SCREEN_HEIGHT/2) return Vector2{ Fx, Fy }; // Bottom Right
-  if (pos1.x <= SCREEN_WIDTH/2 && pos1.y >= SCREEN_HEIGHT/2) return Vector2{ -Fx, Fy }; // Bottom Left
+  std::cout << "Fx: " << Fx << " Fy: " << Fy << " ";
+  std::cout << "theta: " << theta << " ";
+  if (pos1.x <= SCREEN_WIDTH/2 && pos1.y <= SCREEN_HEIGHT/2) return Vector2{ Fx, Fy }; // Top Left
+  if (pos1.x >= SCREEN_WIDTH/2 && pos1.y <= SCREEN_HEIGHT/2) return Vector2{ -Fx, Fy }; // Top Right
+  if (pos1.x >= SCREEN_WIDTH/2 && pos1.y >= SCREEN_HEIGHT/2) return Vector2{ -Fx, -Fy }; // Bottom Right
+  if (pos1.x <= SCREEN_WIDTH/2 && pos1.y >= SCREEN_HEIGHT/2) return Vector2{ Fx, -Fy }; // Bottom Left
 }
 
 /**
@@ -103,19 +105,24 @@ float gravity(Vector2 pos1, Vector2 pos2, float m1, float m2)
 
 void update(SimObject& square, SimObject centreGrav, Camera2D& pov)
 {
-  pov.zoom += (float)(GetMouseWheelMove()*0.01f);
+  if (IsKeyReleased(KEY_SPACE)) square.addForce(Force{ 0, -1'000.0f }, GetFrameTime());
+
+  pov.zoom += (float)(GetMouseWheelMove()*0.02f);
   pov.target = centreGrav.pos;
+
+  Vector2 perpendicularMagnitude = getPerpendicularMagnitudes
+  (
+    square.pos,
+    centreGrav.pos,
+    gravity(square.pos, centreGrav.pos, square.mass, centreGrav.mass)
+  );
 
   square.addForce
   (
     Force
-    { 
-      getPerpendicularMagnitudes
-      (
-        square.pos,
-        centreGrav.pos,
-        gravity(square.pos, centreGrav.pos, square.mass, centreGrav.mass)
-      )
+    {
+      perpendicularMagnitude.x,
+      perpendicularMagnitude.y
     },
     GetFrameTime()
   );
@@ -123,7 +130,7 @@ void update(SimObject& square, SimObject centreGrav, Camera2D& pov)
   square.pos.x += square.vel.x;
   square.pos.y += square.vel.y;
 
-  std::cout << "xVel: "<< std::setprecision(6) << (float)square.vel.x << " yVel: " << (float)square.vel.y << "\n";
+  std::cout << "x: "<< std::setprecision(6) << (float)square.pos.x << " y: " << (float)square.pos.y << "\n";
 }
 
 void render(SimObject square, SimObject centreGrav, Camera2D pov)
@@ -165,7 +172,7 @@ int main()
     { SCREEN_WIDTH/2.0f, SCREEN_HEIGHT/2.0f }, // Offset
     centreGrav.pos,
     0.0f, // Rotation
-    1.0f // Zoom
+    0.4f // Zoom
   };
 
   SetTargetFPS(60);               // 60 frames-per-second
