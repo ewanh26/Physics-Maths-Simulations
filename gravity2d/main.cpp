@@ -9,8 +9,6 @@
 #define SCREEN_WIDTH 800
 #define SCREEN_HEIGHT 450
 
-// ! NOTE: THIS IS CURRENTLY A WORK IN PROGRESS AND NOT PROPERLY FUNCTIONAL/CORRECT
-
 /**
  * * Force has its magnitude in
  * * the given direction
@@ -76,17 +74,18 @@ float distance(Vector2 p1, Vector2 p2)
 /**
  * Get angle using lengths of x and y differences and tangent-1
  * Use the magnitude (hypoteneuse, F) and angle to find Fx and Fy
- * TODO: NEGATIVE COMPONENTS
- * TODO: FIX THIS WHAT IS GOING ON
 */
 Vector2 getPerpendicularMagnitudes(Vector2 pos1, Vector2 pos2, float fTotalMagnitude)
 {
-  float theta = atan((pos1.y - pos2.y) / (pos1.x - pos2.x)) * 180/PI;
-  float Fx = (cos(theta) * 180/PI) * (pos1.x - pos2.x < 0 ? fTotalMagnitude : -fTotalMagnitude);
-  float Fy = (sin(theta) * 180/PI) * (pos1.y - pos2.y < 0 ? -fTotalMagnitude : fTotalMagnitude);
+  float theta = abs(atan((pos1.y - pos2.y) / (pos1.x - pos2.x)) * 180/PI);
+  float Fx = (cos(theta) * 180/PI) * fTotalMagnitude;
+  float Fy = (sin(theta) * 180/PI) * fTotalMagnitude;
   std::cout << "theta: " << theta << " ";
   std::cout << "Fx: " << Fx << " Fy: " << Fy;
-  return Vector2{ Fx, Fy };
+  if (pos1.x <= SCREEN_WIDTH/2 && pos1.y <= SCREEN_HEIGHT/2) return Vector2{ -Fx, -Fy }; // Top Left
+  if (pos1.x >= SCREEN_WIDTH/2 && pos1.y <= SCREEN_HEIGHT/2) return Vector2{ Fx, -Fy }; // Top Right
+  if (pos1.x >= SCREEN_WIDTH/2 && pos1.y >= SCREEN_HEIGHT/2) return Vector2{ Fx, Fy }; // Bottom Right
+  if (pos1.x <= SCREEN_WIDTH/2 && pos1.y >= SCREEN_HEIGHT/2) return Vector2{ -Fx, Fy }; // Bottom Left
 }
 
 /**
@@ -145,7 +144,7 @@ int main()
 
   SimObject square
   {
-    Vector2{ 0.0f, 500.0f },
+    Vector2{ 0.0f, 0.0f },
     Vector2{ 40, 40 },
     Vector2{ 0.0f, 0.0f },
     10.0f,
