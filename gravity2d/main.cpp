@@ -88,6 +88,8 @@ Vector2 getPerpendicularMagnitudes(Vector2 pos1, Vector2 pos2, float fTotalMagni
   if (pos1.x >= SCREEN_WIDTH/2 && pos1.y <= SCREEN_HEIGHT/2) return Vector2{ -Fx, Fy }; // Top Right
   if (pos1.x >= SCREEN_WIDTH/2 && pos1.y >= SCREEN_HEIGHT/2) return Vector2{ -Fx, -Fy }; // Bottom Right
   if (pos1.x <= SCREEN_WIDTH/2 && pos1.y >= SCREEN_HEIGHT/2) return Vector2{ Fx, -Fy }; // Bottom Left
+  
+  return Vector2{};
 }
 
 /**
@@ -103,21 +105,24 @@ float gravity(Vector2 pos1, Vector2 pos2, float m1, float m2)
   return G * ((m1 * m2) / (dist*dist));
 }
 
-void update(SimObject& square, SimObject centreGrav, Camera2D& pov)
+void update(SimObject& object, SimObject centreGrav, Camera2D& pov)
 {
-  if (IsKeyReleased(KEY_SPACE)) square.addForce(Force{ 0, -1'000.0f }, GetFrameTime());
+  if (IsKeyReleased(KEY_UP)) object.addForce(Force{ 0, -1'000.0f }, GetFrameTime());
+  if (IsKeyReleased(KEY_DOWN)) object.addForce(Force{ 0, 1'000.0f }, GetFrameTime());
+  if (IsKeyReleased(KEY_RIGHT)) object.addForce(Force{ 1'000, 0.0f }, GetFrameTime());
+  if (IsKeyReleased(KEY_LEFT)) object.addForce(Force{ -1'000.0, 0.0f }, GetFrameTime());
 
   pov.zoom += (float)(GetMouseWheelMove()*0.02f);
   pov.target = centreGrav.pos;
 
   Vector2 perpendicularMagnitude = getPerpendicularMagnitudes
   (
-    square.pos,
+    object.pos,
     centreGrav.pos,
-    gravity(square.pos, centreGrav.pos, square.mass, centreGrav.mass)
+    gravity(object.pos, centreGrav.pos, object.mass, centreGrav.mass)
   );
 
-  square.addForce
+  object.addForce
   (
     Force
     {
@@ -127,19 +132,22 @@ void update(SimObject& square, SimObject centreGrav, Camera2D& pov)
     GetFrameTime()
   );
 
-  square.pos.x += square.vel.x;
-  square.pos.y += square.vel.y;
+  object.pos.x += object.vel.x;
+  object.pos.y += object.vel.y;
 
-  std::cout << "x: "<< std::setprecision(6) << (float)square.pos.x << " y: " << (float)square.pos.y << "\n";
+  std::cout << "x: "<< std::setprecision(6) << (float)object.pos.x << " y: " << (float)object.pos.y << "\n";
 }
 
-void render(SimObject square, SimObject centreGrav, Camera2D pov)
+void render(SimObject object, SimObject centreGrav, Camera2D pov)
 {
   ClearBackground(RAYWHITE);
   BeginDrawing();
   BeginMode2D(pov);
   DrawCircleV(centreGrav.pos, centreGrav.size.x, centreGrav.color);
-  DrawCircleV(square.pos, square.size.x, square.color);
+  DrawCircleV(object.pos, object.size.x, object.color);
+  // DrawLineV(object.pos, centreGrav.pos, BLUE);
+  // DrawLineV(object.pos, Vector2{ object.pos.x, centreGrav.pos.y }, GREEN);
+  // DrawLineV(centreGrav.pos, Vector2{ object.pos.x, centreGrav.pos.y }, GREEN); // Trigonometry demonstration
   EndMode2D();
   EndDrawing();
 }
@@ -149,7 +157,7 @@ int main()
   // Initialization
   InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "window lol");
 
-  SimObject square
+  SimObject object
   {
     Vector2{ 0.0f, 0.0f },
     Vector2{ 40, 40 },
@@ -169,7 +177,7 @@ int main()
 
   Camera2D pov
   {
-    { SCREEN_WIDTH/2.0f, SCREEN_HEIGHT/2.0f }, // Offset
+    { SCREEN_WIDTH/2, SCREEN_HEIGHT/2 }, // Offset
     centreGrav.pos,
     0.0f, // Rotation
     0.4f // Zoom
@@ -180,9 +188,9 @@ int main()
   // Main loop
   while (!WindowShouldClose())    // Detect window close button or ESC key
   {
-    update(square, centreGrav, pov);
+    update(object, centreGrav, pov);
 
-    render(square, centreGrav, pov);
+    render(object, centreGrav, pov);
   }
 
   // De-Initialization
