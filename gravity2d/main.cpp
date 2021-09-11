@@ -105,53 +105,6 @@ float gravity(Vector2 pos1, Vector2 pos2, float m1, float m2)
   return G * ((m1 * m2) / (dist*dist));
 }
 
-void update(SimObject& object, SimObject centreGrav, Camera2D& pov)
-{
-  if (IsKeyReleased(KEY_UP)) object.addForce(Force{ 0, -1'000.0f }, GetFrameTime());
-  if (IsKeyReleased(KEY_DOWN)) object.addForce(Force{ 0, 1'000.0f }, GetFrameTime());
-  if (IsKeyReleased(KEY_RIGHT)) object.addForce(Force{ 1'000, 0.0f }, GetFrameTime());
-  if (IsKeyReleased(KEY_LEFT)) object.addForce(Force{ -1'000.0, 0.0f }, GetFrameTime());
-
-  pov.zoom += (float)(GetMouseWheelMove()*0.02f);
-  pov.target = centreGrav.pos;
-
-  Vector2 perpendicularMagnitude = getPerpendicularMagnitudes
-  (
-    object.pos,
-    centreGrav.pos,
-    gravity(object.pos, centreGrav.pos, object.mass, centreGrav.mass)
-  );
-
-  object.addForce
-  (
-    Force
-    {
-      perpendicularMagnitude.x,
-      perpendicularMagnitude.y
-    },
-    GetFrameTime()
-  );
-
-  object.pos.x += object.vel.x;
-  object.pos.y += object.vel.y;
-
-  std::cout << "x: "<< std::setprecision(6) << (float)object.pos.x << " y: " << (float)object.pos.y << "\n";
-}
-
-void render(SimObject object, SimObject centreGrav, Camera2D pov)
-{
-  ClearBackground(RAYWHITE);
-  BeginDrawing();
-  BeginMode2D(pov);
-  DrawCircleV(centreGrav.pos, centreGrav.size.x, centreGrav.color);
-  DrawCircleV(object.pos, object.size.x, object.color);
-  // DrawLineV(object.pos, centreGrav.pos, BLUE);
-  // DrawLineV(object.pos, Vector2{ object.pos.x, centreGrav.pos.y }, GREEN);
-  // DrawLineV(centreGrav.pos, Vector2{ object.pos.x, centreGrav.pos.y }, GREEN); // Trigonometry demonstration
-  EndMode2D();
-  EndDrawing();
-}
-
 int main()
 {
   // Initialization
@@ -172,7 +125,7 @@ int main()
     Vector2{ 50.0f, 50.0f },
     Vector2{ 0.0f, 0.0f },
     5'972'900'000'000.0f,
-    BLACK
+    YELLOW
   };
 
   Camera2D pov
@@ -185,12 +138,59 @@ int main()
 
   SetTargetFPS(60);               // 60 frames-per-second
 
+  auto update = [&, centreGrav]()
+  {
+    if (IsKeyReleased(KEY_UP)) object.addForce(Force{ 0, -1'000.0f }, GetFrameTime());
+    if (IsKeyReleased(KEY_DOWN)) object.addForce(Force{ 0, 1'000.0f }, GetFrameTime());
+    if (IsKeyReleased(KEY_RIGHT)) object.addForce(Force{ 1'000, 0.0f }, GetFrameTime());
+    if (IsKeyReleased(KEY_LEFT)) object.addForce(Force{ -1'000.0, 0.0f }, GetFrameTime());
+
+    pov.zoom += (float)(GetMouseWheelMove()*0.02f);
+    pov.target = centreGrav.pos;
+
+    Vector2 perpendicularMagnitude = getPerpendicularMagnitudes
+    (
+      object.pos,
+      centreGrav.pos,
+      gravity(object.pos, centreGrav.pos, object.mass, centreGrav.mass)
+    );
+
+    object.addForce
+    (
+      Force
+      {
+        perpendicularMagnitude.x,
+        perpendicularMagnitude.y
+      },
+      GetFrameTime()
+    );
+
+    object.pos.x += object.vel.x;
+    object.pos.y += object.vel.y;
+
+    std::cout << "x: "<< std::setprecision(6) << (float)object.pos.x << " y: " << (float)object.pos.y << "\n";
+  };
+
+  auto render = [&]()
+  {
+    ClearBackground(BLACK);
+    BeginDrawing();
+    BeginMode2D(pov);
+    DrawCircleV(centreGrav.pos, centreGrav.size.x, centreGrav.color);
+    DrawCircleV(object.pos, object.size.x, object.color);
+    // DrawLineV(object.pos, centreGrav.pos, BLUE);
+    // DrawLineV(object.pos, Vector2{ object.pos.x, centreGrav.pos.y }, GREEN);
+    // DrawLineV(centreGrav.pos, Vector2{ object.pos.x, centreGrav.pos.y }, GREEN); // Trigonometry demonstration
+    EndMode2D();
+    EndDrawing();
+  };
+
   // Main loop
   while (!WindowShouldClose())    // Detect window close button or ESC key
   {
-    update(object, centreGrav, pov);
+    update();
 
-    render(object, centreGrav, pov);
+    render();
   }
 
   // De-Initialization
