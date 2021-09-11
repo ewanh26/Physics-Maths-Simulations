@@ -30,12 +30,11 @@ void addGravity(Object& object, Object centreGrav)
 
 int main()
 {
-  // Initialization
-  InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "window lol");
+  InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Newtonian gravity in space");
 
   Object object
   {
-    Vector2{ 0.0f, 0.0f },
+    Vector2{ -750.0f, 400.0f },
     Vector2{ 40, 40 },
     Vector2{ 0.0f, 0.0f },
     10.0f,
@@ -44,7 +43,7 @@ int main()
 
   Object centreGrav
   {
-    Vector2{ SCREEN_WIDTH/2.0f, SCREEN_HEIGHT/2.0f },
+    Vector2{ 0, 0 },
     Vector2{ 50.0f, 50.0f },
     Vector2{ 0.0f, 0.0f },
     5'972'900'000'000.0f,
@@ -59,7 +58,7 @@ int main()
     0.4f // Zoom
   };
 
-  SetTargetFPS(60);               // 60 frames-per-second
+  SetTargetFPS(60);
 
   auto update = [&, centreGrav]()
   {
@@ -91,16 +90,14 @@ int main()
     EndDrawing();
   };
 
-  // Main loop
-  while (!WindowShouldClose())    // Detect window close button or ESC key
+  while (!WindowShouldClose())
   {
     update();
 
     render();
   }
 
-  // De-Initialization
-  CloseWindow();        // Close window and OpenGL context
+  CloseWindow(); 
 
   return 0;
 }

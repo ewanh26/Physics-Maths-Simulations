@@ -27,10 +27,10 @@ Vector2 getPerpendicularMagnitudes(Vector2 pos1, Vector2 pos2, float fTotalMagni
   float theta = abs(atan((pos1.y - pos2.y) / (pos1.x - pos2.x)) * 180/PI);
   float Fx = (abs(cos(theta)) * 180/PI) * fTotalMagnitude;
   float Fy = (abs(sin(theta)) * 180/PI) * fTotalMagnitude;
-  if (pos1.x <= SCREEN_WIDTH/2 && pos1.y <= SCREEN_HEIGHT/2) return (Vector2){ Fx, Fy }; // Top Left
-  if (pos1.x >= SCREEN_WIDTH/2 && pos1.y <= SCREEN_HEIGHT/2) return (Vector2){ -Fx, Fy }; // Top Right
-  if (pos1.x >= SCREEN_WIDTH/2 && pos1.y >= SCREEN_HEIGHT/2) return (Vector2){ -Fx, -Fy }; // Bottom Right
-  if (pos1.x <= SCREEN_WIDTH/2 && pos1.y >= SCREEN_HEIGHT/2) return (Vector2){ Fx, -Fy }; // Bottom Left
+  if (pos1.x <= 0 && pos1.y <= 0) return (Vector2){ Fx, Fy }; // Top Left
+  if (pos1.x >= 0 && pos1.y <= 0) return (Vector2){ -Fx, Fy }; // Top Right
+  if (pos1.x >= 0 && pos1.y >= 0) return (Vector2){ -Fx, -Fy }; // Bottom Right
+  if (pos1.x <= 0 && pos1.y >= 0) return (Vector2){ Fx, -Fy }; // Bottom Left
   
   return (Vector2){ 0, 0 };
 }
