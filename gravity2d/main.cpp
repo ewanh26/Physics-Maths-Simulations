@@ -81,9 +81,6 @@ Vector2 getPerpendicularMagnitudes(Vector2 pos1, Vector2 pos2, float fTotalMagni
   float theta = abs(atan((pos1.y - pos2.y) / (pos1.x - pos2.x)) * 180/PI);
   float Fx = (abs(cos(theta)) * 180/PI) * fTotalMagnitude;
   float Fy = (abs(sin(theta)) * 180/PI) * fTotalMagnitude;
-  std::cout << "theta: " << theta << " ";
-  std::cout << "Fx: " << Fx << " Fy: " << Fy << " ";
-  std::cout << "theta: " << theta << " ";
   if (pos1.x <= SCREEN_WIDTH/2 && pos1.y <= SCREEN_HEIGHT/2) return Vector2{ Fx, Fy }; // Top Left
   if (pos1.x >= SCREEN_WIDTH/2 && pos1.y <= SCREEN_HEIGHT/2) return Vector2{ -Fx, Fy }; // Top Right
   if (pos1.x >= SCREEN_WIDTH/2 && pos1.y >= SCREEN_HEIGHT/2) return Vector2{ -Fx, -Fy }; // Bottom Right
@@ -167,8 +164,6 @@ int main()
 
     object.pos.x += object.vel.x;
     object.pos.y += object.vel.y;
-
-    std::cout << "x: "<< std::setprecision(6) << (float)object.pos.x << " y: " << (float)object.pos.y << "\n";
   };
 
   auto render = [&]()
