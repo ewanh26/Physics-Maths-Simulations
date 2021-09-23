@@ -1,1 +1,1 @@
-g++ .\main.cpp ../include/gravity.c -o output.exe -O1 -Wall -Wno-missing-braces -std=c++2a -I ../include/ -L ../lib/ -lraylib -lopengl32 -lgdi32 -lwinmm
+g++ .\main.cpp ./gravity.c -o output.exe -O1 -Wall -Wno-missing-braces -std=c++2a -I ../include/ -L ../lib/ -lraylib -lopengl32 -lgdi32 -lwinmm
