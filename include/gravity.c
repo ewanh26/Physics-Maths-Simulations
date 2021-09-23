@@ -22,7 +22,7 @@ float distance(Vector2 p1, Vector2 p2)
   );
 }
 
-Vector2 getPerpendicularMagnitudes(Vector2 pos1, Vector2 pos2, float fTotalMagnitude)
+Vector2 getComponents(Vector2 pos1, Vector2 pos2, float fTotalMagnitude)
 {
   float theta = abs(atan((pos1.y - pos2.y) / (pos1.x - pos2.x)) * 180/PI);
   float Fx = (abs(cos(theta)) * 180/PI) * fTotalMagnitude;

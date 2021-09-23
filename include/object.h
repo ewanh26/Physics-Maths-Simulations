@@ -23,6 +23,7 @@ struct Force
  * width and height (x and y in size).
  * velocities in x and y directions.
  * mass (theoretically in kilograms).
+ * color.
  * a function which allows you to apply a
  * force to the object
 */

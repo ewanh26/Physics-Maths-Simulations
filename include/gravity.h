@@ -8,7 +8,7 @@
  * Get angle using lengths of x and y differences and tangent-1
  * Use the magnitude (hypoteneuse, F) and angle to find Fx and Fy
 */
-Vector2 getPerpendicularMagnitudes(Vector2 pos1, Vector2 pos2, float fTotalMagnitude);
+Vector2 getComponents(Vector2 pos1, Vector2 pos2, float fTotalMagnitude);
 
 /**
  * * Implements Newton's law of universal gravitation
