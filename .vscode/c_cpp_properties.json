@@ -1,0 +1,22 @@
+{
+  "configurations": [
+    {
+      "name": "Win32",
+      "includePath": [
+        "${default}",
+        "include",
+        "C:/mingw/mingw32/bin/../lib/gcc/i686-w64-mingw32/8.1.0/include/c++",
+        "C:/mingw/mingw32/bin/../lib/gcc/i686-w64-mingw32/8.1.0/include/c++/i686-w64-mingw32",
+        "C:/mingw/mingw32/bin/../lib/gcc/i686-w64-mingw32/8.1.0/include/c++/backward",
+        "C:/mingw/mingw32/bin/../lib/gcc/i686-w64-mingw32/8.1.0/include",
+        "C:/mingw/mingw32/bin/../lib/gcc/i686-w64-mingw32/8.1.0/include-fixed",
+        "C:/mingw/mingw32/bin/../lib/gcc/i686-w64-mingw32/8.1.0/../../../../i686-w64-mingw32/include"
+      ],
+      "cStandard": "c99",
+      "cppStandard": "c++20",
+      "intelliSenseMode": "windows-gcc-x64",
+      "windowsSdkVersion": "10.0.19041.0"
+    }
+  ],
+  "version": 4
+}

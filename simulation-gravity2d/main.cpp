@@ -10,7 +10,7 @@
 
 void addGravity(Object& object, Object centreGrav)
 {
-  Vector2 perpendicularMagnitude = getComponents
+  Vector2 perpendicularMagnitude = getComponentsFg
   (
     object.pos,
     centreGrav.pos,

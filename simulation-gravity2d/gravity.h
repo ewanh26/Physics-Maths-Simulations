@@ -5,10 +5,10 @@
 #endif
 
 /**
- * Get angle using lengths of x and y differences and tangent-1
+ * Get angle using lengths of x and y differences and arctan
  * Use the magnitude (hypoteneuse, F) and angle to find Fx and Fy
 */
-Vector2 getComponents(Vector2 pos1, Vector2 pos2, float fTotalMagnitude);
+Vector2 getComponentsFg(Vector2 pos1, Vector2 pos2, float fTotalMagnitude);
 
 /**
  * * Implements Newton's law of universal gravitation
@@ -19,15 +19,4 @@ Vector2 getComponents(Vector2 pos1, Vector2 pos2, float fTotalMagnitude);
 */
 float gravity(Vector2 pos1, Vector2 pos2, float m1, float m2);
 
-
-/**
- * * Pythagoras' theorem to find distance
- * * between two points.
- * * a^2 + b^2 = c^2.
- * a being the difference of their x values.
- * b being the difference of their y values.
- * c^2 being the distance between the points
- * (the hypoteneuse).
-*/
-float distance(Vector2 p1, Vector2 p2);
 #endif

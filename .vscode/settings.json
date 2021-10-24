@@ -1,6 +1,10 @@
 {
   "files.associations": {
     "*.html": "html",
-    "cmath": "cpp"
-  }
+    "cmath": "cpp",
+    "raylib.h": "c",
+    "iostream": "cpp",
+    "iomanip": "cpp"
+  },
+  "C_Cpp.errorSquiggles": "EnabledIfIncludesResolve"
 }

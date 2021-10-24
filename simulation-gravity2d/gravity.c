@@ -10,27 +10,21 @@
 #ifndef _MATH_H
   #include <math.h>
 #endif
+#ifndef MATHEXT_H
+  #include "math_ext.h"
+#endif
 // * Gravitational constant
 #define G 6.67f * 10e-11
 
-float distance(Vector2 p1, Vector2 p2)
+Vector2 getComponentsFg(Vector2 p1, Vector2 p2, float fTotalMagnitude)
 {
-  return sqrt
-  (
-    pow(p1.x - p2.x, 2)
-    + pow(p1.y - p2.y, 2)
-  );
-}
-
-Vector2 getComponents(Vector2 pos1, Vector2 pos2, float fTotalMagnitude)
-{
-  float theta = abs(atan((pos1.y - pos2.y) / (pos1.x - pos2.x)) * 180/PI);
+  float theta = abs(atan((p1.y - p2.y) / (p1.x - p2.x)) * 180/PI);
   float Fx = (abs(cos(theta)) * 180/PI) * fTotalMagnitude;
   float Fy = (abs(sin(theta)) * 180/PI) * fTotalMagnitude;
-  if (pos1.x <= 0 && pos1.y <= 0) return (Vector2){ Fx, Fy }; // Top Left
-  if (pos1.x >= 0 && pos1.y <= 0) return (Vector2){ -Fx, Fy }; // Top Right
-  if (pos1.x >= 0 && pos1.y >= 0) return (Vector2){ -Fx, -Fy }; // Bottom Right
-  if (pos1.x <= 0 && pos1.y >= 0) return (Vector2){ Fx, -Fy }; // Bottom Left
+  if (p1.x <= 0 && p1.y <= 0) return (Vector2){ Fx, Fy }; // Top Left
+  if (p1.x >= 0 && p1.y <= 0) return (Vector2){ -Fx, Fy }; // Top Right
+  if (p1.x >= 0 && p1.y >= 0) return (Vector2){ -Fx, -Fy }; // Bottom Right
+  if (p1.x <= 0 && p1.y >= 0) return (Vector2){ Fx, -Fy }; // Bottom Left
   
   return (Vector2){ 0, 0 };
 }
