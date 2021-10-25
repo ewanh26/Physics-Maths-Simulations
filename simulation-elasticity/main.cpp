@@ -3,9 +3,7 @@
 #include <math.h>
 #include <iomanip>
 #include <iostream>
-#include <string>
 #include <ostream>
-#include <sstream>
 #include "elasticity.h"
 #include "math_ext.h"
 
