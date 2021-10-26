@@ -11,6 +11,24 @@
 #define PHI ((1 + sqrt(5)) / 2)
 #define GOLDEN_ANGLE(n) 360 - 360/(PHI+n)
 
+bool checkPrimeNumber(int n) {
+  bool isPrime = true;
+
+  // 0 and 1 are not prime numbers
+  if (n == 0 || n == 1) {
+    isPrime = false;
+  }
+  else {
+    for (int i = 2; i <= n / 2; ++i) {
+      if (n % i == 0) {
+        isPrime = false;
+        break;
+      }
+    }
+  }
+  return isPrime;
+}
+
 int main(int argc, char** argv)
 {
   InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "The golden ratio");

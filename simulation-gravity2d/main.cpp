@@ -4,6 +4,7 @@
 #include <math.h>
 #include <iostream>
 #include <iomanip>
+#include <vector>
 
 #define SCREEN_WIDTH 800
 #define SCREEN_HEIGHT 450
@@ -31,6 +32,9 @@ void addGravity(Object& object, Object centreGrav)
 int main()
 {
   InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Newtonian gravity in space");
+
+  std::vector<Vector2> lines;
+  bool linetoggle = 0;
 
   Object object
   {
@@ -66,6 +70,11 @@ int main()
     if (IsKeyReleased(KEY_DOWN)) object.addForce(Force{ 0, 1'000.0f }, GetFrameTime());
     if (IsKeyReleased(KEY_RIGHT)) object.addForce(Force{ 1'000, 0.0f }, GetFrameTime());
     if (IsKeyReleased(KEY_LEFT)) object.addForce(Force{ -1'000.0, 0.0f }, GetFrameTime());
+    if (IsKeyReleased(KEY_SPACE))
+    {
+      linetoggle = !linetoggle;
+      lines.clear();
+    }
 
     pov.zoom += (float)(GetMouseWheelMove()*0.02f);
     pov.target = centreGrav.pos;
@@ -86,6 +95,14 @@ int main()
     // DrawLineV(object.pos, centreGrav.pos, BLUE);
     // DrawLineV(object.pos, Vector2{ object.pos.x, centreGrav.pos.y }, GREEN);
     // DrawLineV(centreGrav.pos, Vector2{ object.pos.x, centreGrav.pos.y }, GREEN); // Trigonometry demonstration
+    if (linetoggle)
+    {
+      lines.push_back(object.pos);
+      for (size_t i = 1; i < lines.size(); i++)
+      {
+        DrawLineV(lines[i-1], lines[i], RAYWHITE);
+      }
+    }
     EndMode2D();
     EndDrawing();
   };
