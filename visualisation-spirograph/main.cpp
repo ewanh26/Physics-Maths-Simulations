@@ -14,9 +14,9 @@ int main()
 
   float alpha = 0; // α
   float beta; // β
-  const float r_1 = 100.0f; // radius of centre circle
-  const float r_2 = 50 * sqrt(2); // radius of second circle
-  const float l = 150.0f; // length of line
+  const float r_1 = 500.0f; // radius of centre circle
+  const float r_2 = r_1 / 4.1f; // radius of second circle (can be negative if inside of centre circle)
+  const float l = r_2; // length of line (+ - makes no difference)
   float s;
   Vector2 p_1;
   Vector2 p_2;
@@ -43,13 +43,17 @@ int main()
       lines.clear();
       showPattern = !showPattern;
     }
-    if (IsKeyDown(KEY_RIGHT)) camera.offset.x -= 2;
-    if (IsKeyDown(KEY_LEFT)) camera.offset.x += 2;
-    if (IsKeyDown(KEY_UP)) camera.offset.y += 2;
-    if (IsKeyDown(KEY_DOWN)) camera.offset.y -= 2;
+    if (IsKeyDown(KEY_RIGHT)) camera.offset.x -= 5;
+    if (IsKeyDown(KEY_LEFT)) camera.offset.x += 5;
+    if (IsKeyDown(KEY_UP)) camera.offset.y += 5;
+    if (IsKeyDown(KEY_DOWN)) camera.offset.y -= 5;
     if (IsKeyDown(KEY_A)) camera.rotation -= 2;
     if (IsKeyDown(KEY_D)) camera.rotation += 2;
-    if (IsKeyDown(KEY_R)) camera.offset = OFFSET_CENTRE;
+    if (IsKeyDown(KEY_R)) 
+    {
+      camera.offset = OFFSET_CENTRE;
+      camera.rotation = 0;
+    }
     if (IsKeyDown(KEY_W)) camera.zoom += 0.05f;
     if (IsKeyDown(KEY_S)) camera.zoom -= 0.05f;
 
