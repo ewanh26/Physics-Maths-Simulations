@@ -15,8 +15,8 @@ int main()
   float alpha = 0; // α
   float beta; // β
   const float r_1 = 500.0f; // radius of centre circle
-  const float r_2 = r_1 / 4.1f; // radius of second circle (can be negative if inside of centre circle)
-  const float l = r_2; // length of line (+ - makes no difference)
+  const float r_2 = r_1 / 9.2f; // radius of second circle (can be negative if inside of centre circle)
+  const float l = r_2*8; // length of line (+ - makes no difference)
   float s;
   Vector2 p_1;
   Vector2 p_2;
