@@ -57,8 +57,8 @@ int main()
     if (IsKeyDown(KEY_W)) camera.zoom += 0.05f;
     if (IsKeyDown(KEY_S)) camera.zoom -= 0.05f;
 
-    s = (alpha / 360) * (2 * PI * r_2);
-    beta = (360 * s) / (2 * PI * r_1);
+    s = alpha * r_2; // degrees (alpha / 360) * (2 * PI * r_2);
+    beta = s / r_1; // degrees (360 * s) / (2 * PI * r_1);
     p_1 =
     {
       (r_1 + r_2) * cos(beta),
