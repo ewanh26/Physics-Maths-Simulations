@@ -24,13 +24,13 @@ int main()
 
   auto update = [&]()
   {
-    if (IsKeyPressed(KEY_SPACE))
+    if (IsKeyReleased(KEY_SPACE))
     {
       object.addForce(Force{ 0, -1000 }, DELTATIME);
       object.pos.y += object.vel.y;
     }
 
-    else if (object.pos.y + object.vel.y + object.size.y <= SCREEN_HEIGHT)
+    if (object.pos.y + object.vel.y + object.size.y < SCREEN_HEIGHT)
     {
       object.addForce(Force{ 0, (object.mass * g) * 0.1f }, DELTATIME);
       object.pos.y += object.vel.y;

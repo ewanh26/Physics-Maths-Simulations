@@ -9,7 +9,7 @@
 
 // Length of pendulum string
 const float L = 100.0f;
-// 60 degrees up at the beginning
+// Amount of radians up at the beginning
 float theta_0 = PI / 2;
 // No angular velocity at the beginning
 float dtheta_0 = 0;
