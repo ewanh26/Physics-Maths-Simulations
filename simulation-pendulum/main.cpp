@@ -14,7 +14,7 @@ float theta_0 = PI / 2;
 // No angular velocity at the beginning
 float dtheta_0 = 0;
 // Air resistance factor μ affecting angular velocity
-float mu = 0.025f;
+float mu = 0.01f;
 // small Δt
 #define delta_t GetFrameTime()*2
 
@@ -43,11 +43,11 @@ int main()
 
   float t = 0;
   float theta = theta_0;
-  bool dform = 0;
+  bool derivativeForm = 0;
 
   Texture2D ODEderivative = LoadTexture("./ODEderivative.PNG");
   Texture2D ODEdot = LoadTexture("./ODEdot.PNG");
-  Texture2D* chosenImg = dform ? &ODEderivative : &ODEdot;
+  Texture2D* chosenImg = derivativeForm ? &ODEderivative : &ODEdot;
 
   Camera2D pov
   {
@@ -70,9 +70,9 @@ int main()
 
   auto update = [&]()
   {
-    if (IsKeyReleased(KEY_SPACE)) dform = !dform;
+    if (IsKeyReleased(KEY_SPACE)) derivativeForm = !derivativeForm;
 
-    chosenImg = dform ? &ODEderivative : &ODEdot;
+    chosenImg = derivativeForm ? &ODEderivative : &ODEdot;
     theta = get_theta(t);
     pendulum.pos = { L * sin(theta), L * cos(theta) };
     pov.zoom += GetMouseWheelMove()*0.1f;

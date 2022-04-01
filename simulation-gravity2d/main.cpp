@@ -35,6 +35,7 @@ int main()
 
   std::vector<Vector2> lines;
   bool linetoggle = 0;
+  Texture2D equationFg = LoadTexture("Fg.PNG");
 
   Object object
   {
@@ -90,6 +91,7 @@ int main()
     ClearBackground(BLACK);
     BeginDrawing();
     BeginMode2D(pov);
+    DrawTextureEx(equationFg, pov.offset, 0.0f, 2.0f, WHITE);
     DrawCircleV(centreGrav.pos, centreGrav.size.x, centreGrav.color);
     DrawCircleV(object.pos, object.size.x, object.color);
     // DrawLineV(object.pos, centreGrav.pos, BLUE);
@@ -113,6 +115,8 @@ int main()
 
     render();
   }
+
+  lines.clear();
 
   CloseWindow(); 
 

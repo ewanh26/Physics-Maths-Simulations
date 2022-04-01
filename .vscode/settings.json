@@ -4,7 +4,8 @@
     "cmath": "cpp",
     "raylib.h": "c",
     "iostream": "cpp",
-    "iomanip": "cpp"
+    "iomanip": "cpp",
+    "chrono": "cpp"
   },
   "C_Cpp.errorSquiggles": "EnabledIfIncludesResolve"
 }
