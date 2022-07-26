@@ -34,6 +34,8 @@ int main()
     {
       object.addForce(Force{ 0, (object.mass * g) * 0.1f }, DELTATIME);
       object.pos.y += object.vel.y;
+    } else {
+      object.pos.y = SCREEN_HEIGHT - object.size.y;
     }
   };
 

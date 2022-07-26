@@ -1,7 +1,9 @@
-#include "raylib.h"
-#include "object.h"
 #include <math.h>
 #include <iostream>
+#include <string>
+#include <stdio.h>
+#include "raylib.h"
+#include "object.h"
 
 #define SCREEN_WIDTH 800
 #define SCREEN_HEIGHT 450
@@ -10,9 +12,9 @@
 // Length of pendulum string
 const float L = 100.0f;
 // Amount of radians up at the beginning
-float theta_0 = PI / 2;
+float theta_curr = PI / 2;
 // No angular velocity at the beginning
-float dtheta_0 = 0;
+float dtheta_curr = 0;
 // Air resistance factor μ affecting angular velocity
 float mu = 0.01f;
 // small Δt
@@ -24,25 +26,23 @@ float get_d2theta(float theta, float dtheta)
   return -mu * dtheta -(g/L) * sin(theta);
 }
 
-float get_theta(float t)
+float get_theta()
 {
-  float theta = theta_0;
-  float dtheta = dtheta_0;
-  for (float time = 0; time < t; time += delta_t)
-  {
-    float d2theta = get_d2theta(theta, dtheta);
-    theta += dtheta * delta_t;
-    dtheta += d2theta * delta_t;
-  }
+  float dtheta = dtheta_curr;
+  float theta = theta_curr;
+  float d2theta = get_d2theta(theta, dtheta);
+  dtheta += d2theta * delta_t;
+  theta += dtheta * delta_t;
+  dtheta_curr = dtheta;
+  theta_curr = theta;
   return theta;
 }
 
 int main()
 {
   InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Pendulum");
-
-  float t = 0;
-  float theta = theta_0;
+  
+  float theta = theta_curr;
   bool derivativeForm = 0;
 
   Texture2D ODEderivative = LoadTexture("./ODEderivative.PNG");
@@ -73,11 +73,10 @@ int main()
     if (IsKeyReleased(KEY_SPACE)) derivativeForm = !derivativeForm;
 
     chosenImg = derivativeForm ? &ODEderivative : &ODEdot;
-    theta = get_theta(t);
+    theta = get_theta();
     pendulum.pos = { L * sin(theta), L * cos(theta) };
     pov.zoom += GetMouseWheelMove()*0.1f;
     pov.rotation = 0;
-    t += delta_t;
   };
 
   auto render = [&]()
@@ -88,6 +87,10 @@ int main()
     DrawCircleV(pendulum.pos, pendulum.size.x, pendulum.color);
     DrawLineEx(pendulum.pos, { 0.0f, 0.0f }, 1/pov.zoom*2, WHITE);
     DrawTexture(*chosenImg, -chosenImg->width/2, L*1.2f, WHITE);
+    char theta_buffer[64];
+    int ret = snprintf(theta_buffer, 64, "theta (radians): %f", theta);
+    if (ret<0 || ret > 64) exit(1);
+    DrawText(theta_buffer, -SCREEN_WIDTH/2 + 10, -SCREEN_HEIGHT/2 + 60, 20, WHITE);
     EndMode2D();
     EndDrawing();
   };
